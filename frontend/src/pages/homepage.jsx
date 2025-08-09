@@ -1,30 +1,33 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-cover bg-center text-white" style={{ backgroundImage: `url('/background.jpg')` }}>
-      {/* Navbar */}
-      {/* <header className="bg-black/60 backdrop-blur-sm p-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Melbourne Parking</h1>
-        <nav className="space-x-4">
-          <a href="#" className="hover:underline">Home</a>
-          <a href="#" className="hover:underline">Trends</a>
-          <a href="#" className="hover:underline">Insights</a>
-          <a href="#" className="hover:underline">Eco</a>
-        </nav>
-      </header> */}
-
-      {/* Hero Section */}
-      <main className="flex flex-col items-center justify-center text-center py-32 px-4">
-        <h2 className="text-4xl md:text-6xl font-extrabold">In the City:</h2>
-        <p className="text-2xl mt-4 font-semibold">Melbourne Parking For You</p>
-
-        {/* Buttons */}
-        <div className="mt-8 flex flex-wrap gap-4">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg">Map</button>
-          <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg">Trends</button>
-          <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg">Eco</button>
-          <button className="bg-gray-800 hover:bg-gray-900 text-white px-6 py-3 rounded-lg">See Data</button>
-        </div>
-      </main>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <h1 className="text-4xl font-bold mb-2">In the City:</h1>
+      <p className="text-lg text-gray-500 mb-6">Melbourne Parking For You</p>
+      <div className="flex gap-4">
+        <Link to="/map">
+          <button className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            Map
+          </button>
+        </Link>
+        <Link to="/trends">
+          <button className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+            Trends
+          </button>
+        </Link>
+        <Link to="/eco-insights">
+          <button className="px-6 py-2 bg-emerald-500 text-white rounded hover:bg-emerald-600">
+            Eco
+          </button>
+        </Link>
+        <Link to="/data">
+          <button className="px-6 py-2 bg-gray-800 text-white rounded hover:bg-gray-900">
+            See Data
+          </button>
+        </Link>
+      </div>
     </div>
   );
 }
