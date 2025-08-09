@@ -24,7 +24,7 @@ export default function HomePage() {
         </Link>
         <Link to="/data">
           <button className="px-6 py-2 bg-gray-800 text-white rounded hover:bg-gray-900">
-            See Data
+            See Datas
           </button>
         </Link>
       </div>
