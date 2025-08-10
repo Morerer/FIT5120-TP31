@@ -38,7 +38,7 @@ def setup_database():
     """Initialize database and create all tables"""
     print("Creating database tables...")
     create_tables()
-    print("✅ Database tables created successfully!")
+    print(" Database tables created successfully!")
 
 def populate_population_data(db: Session):
     """Populate population trends table"""
@@ -87,7 +87,7 @@ def populate_congestion_data(db: Session):
             db.add(congestion_record)
     
     db.commit()
-    print("✅ Congestion data populated!")
+    print(" Congestion data populated!")
 
 def populate_car_ownership_data(db: Session):
     """Generate and populate car ownership data"""
@@ -116,7 +116,7 @@ def populate_car_ownership_data(db: Session):
             db.add(car_record)
     
     db.commit()
-    print("✅ Car ownership data populated!")
+    print(" Car ownership data populated!")
 
 def populate_parking_zones(db: Session):
     """Create sample parking zones in Melbourne CBD"""
@@ -148,7 +148,7 @@ def populate_parking_zones(db: Session):
             db.add(zone)
     
     db.commit()
-    print("✅ Parking zones populated!")
+    print("Parking zones populated!")
 
 def populate_sample_usage_data(db: Session):
     """Generate sample parking usage data for the last 30 days"""
@@ -202,7 +202,7 @@ def populate_sample_usage_data(db: Session):
         current_date += timedelta(days=1)
     
     db.commit()
-    print("✅ Sample parking usage data populated!")
+    print("Sample parking usage data populated!")
 
 def populate_environmental_data(db: Session):
     """Generate environmental impact data"""
@@ -232,11 +232,11 @@ def populate_environmental_data(db: Session):
                 db.add(env_data)
     
     db.commit()
-    print("✅ Environmental data populated!")
+    print("Environmental data populated!")
 
 def main():
     """Main setup function"""
-    print("🚀 Setting up Melbourne CBD Parking Database...")
+    print("Setting up Melbourne CBD Parking Database...")
     print("=" * 50)
     
     # Create database and tables
@@ -255,9 +255,9 @@ def main():
         populate_environmental_data(db)
         
         print("=" * 50)
-        print("🎉 Database setup completed successfully!")
-        print(f"📊 Database location: melbourne_parking.db")
-        print(f"🔗 You can now start your FastAPI server!")
+        print("Database setup completed successfully!")
+        print(f"Database location: melbourne_parking.db")
+        print(f"You can now start your FastAPI server!")
         
         # Show summary
         population_count = db.query(PopulationTrend).count()
@@ -265,14 +265,14 @@ def main():
         parking_zones_count = db.query(ParkingZone).count()
         usage_records_count = db.query(ParkingUsage).count()
         
-        print(f"\n📈 Data Summary:")
+        print(f"\n Data Summary:")
         print(f"   • Population records: {population_count}")
         print(f"   • Congestion records: {congestion_count}")
         print(f"   • Parking zones: {parking_zones_count}")
         print(f"   • Usage records: {usage_records_count}")
         
     except Exception as e:
-        print(f"❌ Error during setup: {str(e)}")
+        print(f"Error during setup: {str(e)}")
         db.rollback()
     finally:
         db.close()

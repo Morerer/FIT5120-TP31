@@ -6,6 +6,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 
+
 # Import database models and dependencies
 from database.models import (
     get_db, PopulationTrend, CongestionTrend, CarOwnershipTrend,
@@ -317,6 +318,7 @@ async def get_environmental_data(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
+
 # Get parking zone by ID
 @app.get("/api/parking/zones/{zone_id}")
 async def get_parking_zone(zone_id: int, db: Session = Depends(get_db)):
@@ -433,9 +435,9 @@ async def startup_event():
         # Import and run database setup
         from database.models import create_tables
         create_tables()
-        print("✅ Database tables verified/created on startup")
+        print("Database tables verified/created on startup")
     except Exception as e:
-        print(f"❌ Database startup error: {e}")
+        print(f"Database startup error: {e}")
 
 if __name__ == "__main__":
     import uvicorn

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   LineChart, Line, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -11,16 +11,14 @@ const TABS = [
   { key: 'both', label: 'Population vs Congestion' },
 ];
 
-const years = Array.from({ length: 11 }, (_, i) => 2014 + i);
-const data = years.map((y, i) => ({
-  year: String(y),
-  population: 160 + i * 8 + (i % 3 === 0 ? 6 : 0),
-  congestion: 20 + i * 2 + (i % 4 === 0 ? 3 : 0),
-  car: 45 + i * 1.2 + (i % 5 === 0 ? 2 : 0),
-}));
+
+const BASE = import.meta.env.VITE_API_BASE_URL || '';
 
 export default function TrendsPage() {
   const [active, setActive] = useState('population');
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState(null);
 
   const title = useMemo(() => {
     switch (active) {
@@ -30,6 +28,50 @@ export default function TrendsPage() {
       case 'both': return 'Population vs Congestion';
       default: return '';
     }
+  }, [active]);
+
+  const yearRange = useMemo(() => {
+    const ys = rows
+      .map(r => parseInt(r.year, 10))
+      .filter(n => Number.isFinite(n))
+      .sort((a, b) => a - b);
+    if (!ys.length) return null;
+    return `${ys[0]}–${ys[ys.length - 1]}`;
+  }, [rows]);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      setErr(null);
+      try {
+        let path = '/api/trends/population';
+        if (active === 'congestion') path = '/api/trends/congestion';
+        else if (active === 'car') path = '/api/trends/car-ownership';
+        else if (active === 'both') path = '/api/trends/combined';
+
+        const res = await fetch(`${BASE}${path}`);
+        if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+        const json = await res.json();
+
+        // Normalise to the shape recharts expects for each tab
+        // Backend returns: { data: [{ year: "YYYY", population?, congestion?, car? }], ... }
+        const normalised = (json?.data || []).map(d => ({
+          year: String(d.year),
+          population: d.population ?? undefined,
+          congestion: d.congestion ?? undefined,
+          car: d.car ?? undefined,
+        }));
+
+        if (!cancelled) setRows(normalised);
+      } catch (e) {
+        if (!cancelled) setErr(e.message || 'Failed to load data');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
   }, [active]);
 
   return (
@@ -59,57 +101,72 @@ export default function TrendsPage() {
           <div className="rounded-xl bg-gradient-to-br from-gray-50 to-white p-4 md:p-6">
             <div className="flex items-baseline justify-between mb-2">
               <h4 className="text-lg md:text-xl font-semibold">{title}</h4>
-              <span className="text-xs text-gray-500">2014–2024</span>
+              <span className="text-xs text-gray-500">{yearRange || '—'}</span>
             </div>
 
             <div className="h-[380px] md:h-[460px]">
-              <ResponsiveContainer width="100%" height="100%">
-                {active === 'population' ? (
-                  <AreaChart data={data}>
-                    <defs>
-                      <linearGradient id="gPop" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#60a5fa" stopOpacity={0.4}/>
-                        <stop offset="95%" stopColor="#60a5fa" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="year" />
-                    <YAxis />
-                    <Tooltip />
-                    <Area type="monotone" dataKey="population" stroke="#3b82f6" fill="url(#gPop)" strokeWidth={2} />
-                  </AreaChart>
-                ) : active === 'congestion' ? (
-                  <LineChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="year" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="congestion" stroke="#f59e0b" strokeWidth={2} dot={false}/>
-                  </LineChart>
-                ) : active === 'car' ? (
-                  <LineChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="year" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="car" stroke="#10b981" strokeWidth={2} />
-                  </LineChart>
-                ) : (
-                  <LineChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="year" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="population" name="Population (×10k)" stroke="#3b82f6" strokeWidth={2} dot={false}/>
-                    <Line type="monotone" dataKey="congestion" name="Congestion" stroke="#ef4444" strokeWidth={2} dot={false}/>
-                  </LineChart>
-                )}
-              </ResponsiveContainer>
+              {loading ? (
+                <div className="h-full flex items-center justify-center text-sm text-gray-500">
+                  Loading…
+                </div>
+              ) : err ? (
+                <div className="h-full flex items-center justify-center text-sm text-red-600">
+                  Error: {err}
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  {active === 'population' ? (
+                    <AreaChart data={rows}>
+                      <defs>
+                        <linearGradient id="gPop" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#60a5fa" stopOpacity={0.4}/>
+                          <stop offset="95%" stopColor="#60a5fa" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <XAxis dataKey="year" />
+                      <YAxis />
+                      <Tooltip />
+                      <Area type="monotone" dataKey="population" stroke="#3b82f6" fill="url(#gPop)" strokeWidth={2} />
+                    </AreaChart>
+                  ) : active === 'congestion' ? (
+                    <LineChart data={rows}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <XAxis dataKey="year" />
+                      <YAxis />
+                      <Tooltip />
+                      <Line type="monotone" dataKey="congestion" stroke="#f59e0b" strokeWidth={2} dot={false}/>
+                    </LineChart>
+                  ) : active === 'car' ? (
+                    <LineChart data={rows}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <XAxis dataKey="year" />
+                      <YAxis />
+                      <Tooltip />
+                      <Line type="monotone" dataKey="car" stroke="#10b981" strokeWidth={2} />
+                    </LineChart>
+                  ) : (
+                    <LineChart data={rows}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <XAxis dataKey="year" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Line type="monotone" dataKey="population" name="Population (×10k)" stroke="#3b82f6" strokeWidth={2} dot={false}/>
+                      <Line type="monotone" dataKey="congestion" name="Congestion" stroke="#ef4444" strokeWidth={2} dot={false}/>
+                    </LineChart>
+                  )}
+                </ResponsiveContainer>
+              )}
             </div>
 
             <p className="text-xs text-gray-500 mt-3">
-              * Mock data for demo. Replace with API data keeping the same fields.
+              Data fetched from backend endpoints:
+              {` `}
+              {active === 'population' && '/api/trends/population'}
+              {active === 'congestion' && '/api/trends/congestion'}
+              {active === 'car' && '/api/trends/car-ownership'}
+              {active === 'both' && '/api/trends/combined'}
             </p>
           </div>
         </section>
