@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import Navbar from './components/navbar.jsx';
-import HomePage from './pages/HomePage.jsx';
+import HomePage from './pages/homepage.jsx';
 import MapPage from './pages/MapPage.jsx';
 import TrendsPage from './pages/TrendsPage.jsx';
 import EcoInsightsPage from './pages/EcoInsightsPage.jsx'; 
