@@ -160,14 +160,7 @@ export default function TrendsPage() {
               )}
             </div>
 
-            <p className="text-xs text-gray-500 mt-3">
-              Data fetched from backend endpoints:
-              {` `}
-              {active === 'population' && '/api/trends/population'}
-              {active === 'congestion' && '/api/trends/congestion'}
-              {active === 'car' && '/api/trends/car-ownership'}
-              {active === 'both' && '/api/trends/combined'}
-            </p>
+            
           </div>
         </section>
       </div>
