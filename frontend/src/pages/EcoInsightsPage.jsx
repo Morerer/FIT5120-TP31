@@ -7,7 +7,7 @@ import {
 } from 'recharts';
 
 /** —— Mock data (can be replaced with API later) —— */
-// Unit emissions from different modes of transport（g CO2 / km / 人）
+// Unit emissions from different modes of transport（g CO2 / km /）
 const emissionPerKm = [
   { mode: 'Walking',     co2: 0   },
   { mode: 'Cycling',     co2: 0   },
