@@ -118,7 +118,7 @@ export default function EcoInsightsPage() {
             </div>
 
             <p className="text-xs text-gray-500 mt-3">
-              * Mock data for demo. Replace with real datasets (e.g., emissions by mode, yearly modal split).
+              
             </p>
           </div>
         </section>
