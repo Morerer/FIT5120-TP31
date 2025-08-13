@@ -21,11 +21,6 @@ export default function Navbar() {
           </NavLink>
         </NavigationMenu.Item>
         <NavigationMenu.Item>
-          <NavLink to="/map" className={linkClass}>
-            Map
-          </NavLink>
-        </NavigationMenu.Item>
-        <NavigationMenu.Item>
           <NavLink to="/trends" className={linkClass}>
             Trends
           </NavLink>

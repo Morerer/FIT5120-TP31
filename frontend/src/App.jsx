@@ -15,7 +15,6 @@ export default function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/map" element={<MapPage />} />
         <Route path="/trends" element={<TrendsPage />} />
         <Route path="/eco-insights" element={<EcoInsightsPage />} /> {/* New Page */}
         <Route path="*" element={<NotFound />} />

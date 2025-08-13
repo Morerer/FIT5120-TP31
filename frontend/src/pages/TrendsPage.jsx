@@ -54,8 +54,7 @@ export default function TrendsPage() {
         if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
         const json = await res.json();
 
-        // Normalise to the shape recharts expects for each tab
-        // Backend returns: { data: [{ year: "YYYY", population?, congestion?, car? }], ... }
+       
         const normalised = (json?.data || []).map(d => ({
           year: String(d.year),
           population: d.population ?? undefined,
