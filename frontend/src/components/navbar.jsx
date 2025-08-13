@@ -11,7 +11,7 @@ export default function Navbar() {
   return (
     <NavigationMenu.Root className="relative flex justify-between items-center bg-gray-800 text-white px-6 py-4">
       {/* Logo / Title */}
-      <div className="text-xl font-bold">Melbourne Parking</div>
+      <div className="text-xl font-bold">Melbourne Parking Insights</div>
 
       {/* Navigation Links */}
       <NavigationMenu.List className="flex gap-6 items-center">
