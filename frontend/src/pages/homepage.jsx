@@ -22,7 +22,7 @@ export default function HomePage() {
           <CardLink
             to="/trends"
             title="Trends"
-            desc="Hourly & weekly parking patterns."
+            desc="yearly and monthly patterns."
             accent="from-emerald-50 to-emerald-100"
             icon={<LineChart className="h-8 w-8 text-emerald-600" />}
           />
